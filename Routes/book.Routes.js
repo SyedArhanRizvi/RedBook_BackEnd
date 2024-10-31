@@ -1,14 +1,17 @@
 import express from "express";
+import { addNewBookInDBController, bookDeleteController, bookInfoUpdateController, bookWishListController, getAllBooksController, showOneBookController, userReviewController } from "../Controllers/books.Controller.js";
+import userAuthChecker from "../Middlewares/user.Auth.js";
 
 const booksRoutes = express.Router();
-
 // For Show All Books ::
 booksRoutes.get("/getAllBooks", getAllBooksController);
 booksRoutes.get("/readThisBook:id", showOneBookController);
 
 /* This is for Admin Conf */
 // Add New Book Controller ::
-booksRoutes.post("/postNewBook", addNewBookInDBController);
+booksRoutes.post("/postNewBook", userAuthChecker, addNewBookInDBController);
+booksRoutes.post("/addBookIntoWishList:bookID", userAuthChecker, bookWishListController);
+booksRoutes.post("/addUserReview:productID", userAuthChecker, userReviewController);
 
 // Update Previous Book ::
 booksRoutes.put("/updateBookInfo:id", bookInfoUpdateController);

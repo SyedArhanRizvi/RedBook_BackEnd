@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
     user: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "BookUser", // Reference to the user model
         required: true
     },
@@ -37,7 +37,7 @@ const bookSchema = new mongoose.Schema(
       maxlength: 150,
     },
     publisher: {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "BookUser", // Reference to the user model
       required: true,
     },
@@ -48,7 +48,7 @@ const bookSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
-      maxlength: 2000,
+      maxlength: 4000,
     },
     categories: [
       {
@@ -78,17 +78,25 @@ const bookSchema = new mongoose.Schema(
       unique: true,
       required: true,
     },
-    ratings: {
+    totalStar: {
       type: Number,
-      min: 0,
-      max: 5,
-      default: 0,
     },
-    reviews: [
+    ratings: [
       {
-        type: mongoose.Types.ObjectId,
-        ref: "UserReviews",
-      },
+        postedBy : {
+          type: mongoose.Schema.Types.ObjectId,
+          ref : "user"
+        },
+        comment : {
+          type : String
+        },
+        star : {
+          type : Number,
+          min: 0,
+          max: 5,
+          default: 0,
+        }
+      }
     ],
     images: [
       {
@@ -131,4 +139,4 @@ const bookSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const BookModel = mongoose.model("RedBook", bookSchema);
+export const BookModel = mongoose.model("BookModel", bookSchema);

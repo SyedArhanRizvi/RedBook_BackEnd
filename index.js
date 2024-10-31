@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import userRoutes from "./Routes/user.Routes.js";
 import booksRoutes from "./Routes/book.Routes.js";
+import couponsRoutes from "./Routes/coupo.Routes.js";
 dotenv.config();
 
 const app = express();
@@ -27,3 +28,5 @@ mongoose.connect(process.env.MONGODB_CONNECTION)
 
 app.use("/api/user", userRoutes);
 app.use("/api/books", booksRoutes);
+api.use("/api/coupons", couponsRoutes);
+api.use("/api/cart", cartRoutes);

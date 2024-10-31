@@ -80,12 +80,7 @@ const userSchema = new mongoose.Schema(
     authorType: {
       type: String,
     },
-    reviews: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "UserReviews",
-      },
-    ],
+    
     followers: [
       {
         type: mongoose.Types.ObjectId,
@@ -106,8 +101,8 @@ const userSchema = new mongoose.Schema(
   ],
     cart: [
       {
-    type: mongoose.Types.ObjectId,
-    ref: "RedBook"
+      type: mongoose.Types.ObjectId,
+      ref: "RedBook"
       },
     ],
     authorType: {
@@ -115,7 +110,13 @@ const userSchema = new mongoose.Schema(
     },
     otp : {
       type: Number
-    }
+    },
+    wishlist : [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : "BookModel"
+      }
+    ],
   },
   { timestamps: true }
 );

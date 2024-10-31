@@ -19,6 +19,7 @@ userRoutes.post("/userAuthChecker", userAuthChecker, userAuthenticationControlle
 userRoutes.put("/updateAccount/:id", upload.single('userProfileImg'), updateAccountHandler);
 userRoutes.put("/updatePasswordSec1", passwordUpdateController);
 userRoutes.put("/updatePasswordSec2", changePasswordSection2);
+
 // For LoggedOut or Delete Account ::
 userRoutes.delete("/deleteUserAccount", deleteUserAccountController);
 userRoutes.post("/loggedOutAccount/:id", userLoggedOutController);
