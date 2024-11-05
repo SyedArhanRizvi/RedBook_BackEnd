@@ -11,7 +11,7 @@ cloudinary.config({
 const cloudinaryUpload = async (localPath)=>{
     try {
         const uploadedLink = await cloudinary.uploader.upload(localPath);
-        return localPath;
+        return uploadedLink;
     } catch (error) {
        console.log("There is some errors in your cloudinary upload controller ", error);  
     }

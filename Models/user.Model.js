@@ -29,9 +29,11 @@ const userSchema = new mongoose.Schema(
     },
     userProfileImg: {
       type: String,
+      default : ""
     },
     userDescription : {
-      type: String
+      type: String,
+      default: "",
     },
     username: {
       type: String,
@@ -63,8 +65,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
-      minlength: 6,
-      maxlength: 40,
+      minlength: 6
     },
     // Admin Sector ::
     admin: {
@@ -79,6 +80,7 @@ const userSchema = new mongoose.Schema(
     ],
     authorType: {
       type: String,
+      default:""
     },
     
     followers: [

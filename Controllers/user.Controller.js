@@ -4,6 +4,8 @@ import passwordHashController from "../Utils/hashed.Password.js";
 import bcrypt from "bcrypt";
 import generateOtp from "../Utils/otp.Generator.js";
 import sendOtpEmail from "../Utils/nodemailer.js";
+import cloudinaryUpload from "../Utils/cloudinary.upload.js";
+
 export const newAccountController = async (req, res) => {
   let { fullName, username, email, phone, password } = req.body;
   try {
@@ -25,7 +27,6 @@ export const createAdminAccountController = async (req, res) => {
       console.log("Invalid Email ", isUserValid);
       return res.status(401).json({ message: "Invalid Email", isUserValid });
     }
-
     // Validate the password
     const isPasswordValid = await bcrypt.compare(
       password,
@@ -35,11 +36,9 @@ export const createAdminAccountController = async (req, res) => {
       console.log("Invalid Password ", isPasswordValid);
       return res.status(401).json({ message: "Invalid Password", isPasswordValid });
     }
-
     // Update the user's authorType to true ::
-    isUserValid.authorType = true; 
-    await isUserValid.save();
-    return res.status(200).json({message: "Admin account updated successfully", user: isUserValid});
+    const createdAdminAc = await UserModel.findByIdAndUpdate(isUserValid._id, {authorType, admin:true}, {new:true});
+    return res.status(201).json({message: "Admin account updated successfully", user:createdAdminAc});
   } catch (error) {
     console.log("There is some issue in your createAdminAccountController, please fix the bug first =>",error);
     res.status(500).json({message: "There is some issue in your createAdminAccountController", error});
@@ -72,7 +71,8 @@ export const loginAccountController = async (req, res) => {
 };
 export const userAuthenticationController = async (req, res) => {
   try {
-    return res.status(200).json({message:"User Has Already A Token ", user:userLoggedIn});
+    const loggedInUser = req.user;
+    return res.status(200).json({message:"User Has Already A Token ", user:loggedInUser});
   } catch (error) {
     console.log("There is some errors in your userAuthenticationController plz fix the bug first ", error);
     return res.status(500).json({message:"There is some errors in your userAuthenticationController plz fix the bug first ", error});
@@ -80,12 +80,20 @@ export const userAuthenticationController = async (req, res) => {
 };
 
 export const updateAccountHandler = async (req, res) => {
-  let {fullName, username, email, phone, userDescription} = req.body;
-  const id = req.params.id;
+  //fullName, username, description, imageSrc, phone, email
+  let {fullName, username, email, phone, description} = req.body;
+  console.log("This is full body data ", req.body);
+
+  
+  const id = req.params.id;  
+  console.log("This is updated user id ", id);
   const photoLink = req.file ? req.file.path : null;
 try {
   const uploadedImgLink = photoLink ? await cloudinaryUpload(photoLink) : null;
-  const updatedUser = await UserModel.findByIdAndUpdate(id, {fullName, username, email, phone, userDescription, userProfileImg:uploadedImgLink.url});
+  console.log("This is return cloduinary link ", uploadedImgLink);
+  
+
+  const updatedUser = await UserModel.findByIdAndUpdate(id, {fullName, username, email, phone, userDescription:description, userProfileImg:uploadedImgLink ? uploadedImgLink.url : null}, {new:true});
   return res.status(201).json({message:"User Info Updated Successfully ", updatedUser});
 } catch (error) {
   console.log("There is some issus in your updateAccountHandler plz fix the bug first =>", error);
@@ -134,6 +142,8 @@ export const changePasswordSection2 = async (req, res)=>{
 }
 export const deleteUserAccountController = async (req, res) => {
   const {email, password} = req.body;
+  console.log("This is delete user req ", req);
+  
   try {
     const user = await UserModel.findOne({email});
     if(!user) {
@@ -146,13 +156,15 @@ export const deleteUserAccountController = async (req, res) => {
       return res.status(401).json({message:"Invalid Password ", user});
     }
     const deletedUserAccount = await UserModel.deleteOne({email});
-    return res.status(201).json({message:"User Account has successfully deleted"});
+    return res.status(201).clearCookie("auth_token").json({message:"User Account has successfully deleted"});
   } catch (error) {console.log("There is some issus in your deleteUserAccountController plz fix the bug first =>", error);
     res.status(500).json({message:"There is some issus in your deleteUserAccountController plz fix the bug first =>", error});
   }
 };
 export const userLoggedOutController = async (req, res) => {
   const id = req.params.id;
+  console.log("User Logout id ", id);
+  
 try {
   const user = await UserModel.findById(id);
   if (!user) {
@@ -180,3 +192,13 @@ export const userInfoController = async (req, res) => {
     return res.status(500).json({message:"There is some errors so we can not provide you user info plz fix the bug first ", error});
   }
 };
+export const removeAdminAccountController = async (req, res)=>{
+  const id = req.params.id;
+  try {
+    const removedAdmin = await UserModel.findByIdAndUpdate(id, {admin:false}, {new:true});
+    return res.status(201).json({message:"Admin Removed Successfully", removedAdmin});
+  } catch (error) {
+    console.log("There are some errors in your remove admin account controller plz fix the bug first ", error);
+    return res.status(500).json({message:"There are some errors in your remove admin account controller plz fix the bug first ", error});
+  }
+} 

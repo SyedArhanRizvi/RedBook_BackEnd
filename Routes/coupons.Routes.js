@@ -1,6 +1,6 @@
 import express from "express";
-import userAuthChecker from "../Middlewares/user.Auth";
-import { couponCreateController, couponDeleteController, getAllBooksCouponsController, reActivateCouponController } from "../Controllers/coupon.Controller";
+import userAuthChecker from "../Middlewares/user.Auth.js";
+import { couponCreateController, couponDeleteController, getAllBooksCouponsController, reActivateCouponController } from "../Controllers/coupon.Controller.js";
 
 const couponsRoutes = express.Router();
 

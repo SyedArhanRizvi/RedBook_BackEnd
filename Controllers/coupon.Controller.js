@@ -1,6 +1,6 @@
 import { response } from "express";
-import { CouponModel } from "../Models/coupon.Model";
-import { UserModel } from "../Models/user.Model";
+import { CouponModel } from "../Models/coupon.Model.js";
+import { UserModel } from "../Models/user.Model.js";
 
 export const couponCreateController = async (req, res)=>{
     let {code, discountType, discountValue, expirationDay} = req.body;

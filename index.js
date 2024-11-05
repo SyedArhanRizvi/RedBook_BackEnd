@@ -5,13 +5,13 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import userRoutes from "./Routes/user.Routes.js";
 import booksRoutes from "./Routes/book.Routes.js";
-import couponsRoutes from "./Routes/coupo.Routes.js";
+import couponsRoutes from "./Routes/coupons.Routes.js";
 dotenv.config();
 
 const app = express();
 app.use(cookieParser());
 app.use(cors({
-    origin : '*',
+    origin : 'http://localhost:5173',
     credentials : true
 }));
 app.use(express.json());
@@ -28,5 +28,5 @@ mongoose.connect(process.env.MONGODB_CONNECTION)
 
 app.use("/api/user", userRoutes);
 app.use("/api/books", booksRoutes);
-api.use("/api/coupons", couponsRoutes);
-api.use("/api/cart", cartRoutes);
+app.use("/api/coupons", couponsRoutes);
+// api.use("/api/cart", cartRoutes);
