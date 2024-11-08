@@ -1,19 +1,21 @@
 import { v2 as cloudinary } from 'cloudinary';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
 
-cloudinary.config({ 
-    cloud_name: process.env.CLOUD_NAME, 
-    api_key: process.env.CLOUD_API_KEY,
-    api_secret: process.env.CLOUD_SECRET_KEY
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_SECRET_KEY,
 });
 
-const cloudinaryUpload = async (localPath)=>{
-    try {
-        const uploadedLink = await cloudinary.uploader.upload(localPath);
-        return uploadedLink;
-    } catch (error) {
-       console.log("There is some errors in your cloudinary upload controller ", error);  
-    }
-}
-export default cloudinaryUpload;
+const uploadSingleImage = async (imagePath) => {
+  console.log("This is image path get in cloudinary ", imagePath);
+  try {
+    const uploadedImage = await cloudinary.uploader.upload(imagePath);
+    return uploadedImage.url; 
+  } catch (error) {
+    console.error("Error in Cloudinary upload:", error);
+    throw error;
+  }
+};
+export default uploadSingleImage;

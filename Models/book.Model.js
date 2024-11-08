@@ -98,12 +98,10 @@ const bookSchema = new mongoose.Schema(
         }
       }
     ],
-    images: [
-      {
-        type: String, // URLs or file paths to images
-        required: true,
-      },
-    ],
+    bookCoverImg: {
+      type: String,
+    },
+     
     price: {
       type: Number,
       required: true,
@@ -126,17 +124,17 @@ const bookSchema = new mongoose.Schema(
         },
         content: {
           type: String,
-          required: true,
-        },
+          // required: true,
+        }
       },
     ],
     samplePages: {
       type: Number,
       default: 5,
     },
-    bookings: [bookingSchema] // Adding bookings as an array of booking details
+    bookings: [bookingSchema],
+    
   },
   { timestamps: true }
 );
-
 export const BookModel = mongoose.model("BookModel", bookSchema);

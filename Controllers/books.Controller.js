@@ -1,20 +1,61 @@
 import mongoose from "mongoose";
 import { BookModel } from "../Models/book.Model.js";
 import { UserModel } from "../Models/user.Model.js";
+// import cloudinaryUpload from "../Utils/cloudinary.upload.js";
+// import uploadBookImages from "../Utils/cloudinary.upload.js";
+import uploadSingleImage from "../Utils/cloudinary.upload.js";
 
-export const addNewBookInDBController = async (req, res)=>{
-  const {bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree} = req.body;
-  console.log("This is receiver data ",bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree); 
+// import Book from '../models/BookModel';  // Import your book model
+
+export const addNewBookInDBController = async (req, res) => {
+    const {bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree, pages} = req.body;
+    const coverPhoto = req.file ? req.file.path : null;
+    const id = req.params.id;
+    console.log("This is cover photo get in controller  ", coverPhoto);
     try {
-        const addedBook = await BookModel.create({bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree, publisher:req.user._id});
-        return res.status(201).json({message:"Book Posted Successfully", addedBook});
-    } catch (error) {
-      console.log("There is some errors in your getAllBooksController controller plz fix the bug first ", error);
-        return res.status(500).json({message:"There is some errors in your getAllBooksController controller plz fix the bug first ", error});
-    }
-}
+       const mainBookCover = await uploadSingleImage(coverPhoto);
+       console.log("This is get img url from cloudinary ", mainBookCover);
+       
+        // Create or update your book entry in the Book model
+        const validCategories = Array.isArray(categories)
+        ? categories.map(category => 
+            category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()
+          )
+        : [categories.charAt(0).toUpperCase() + categories.slice(1).toLowerCase()];
+    
+        // Parse `pages` to ensure it's an array of objects, if it's a string
+        const parsedPages = typeof pages === "string" ? JSON.parse(pages) : pages;
+    
+        const newBook = await BookModel.create({
+          publisher: req.params.id,
+          bookName,
+          bookTitle,
+          author,
+          description,
+          categories: validCategories,
+          publicationDate,
+          ISBN,
+          price,
+          availableCopies,
+          isFree,
+          bookCoverImg:mainBookCover,
+          pages: parsedPages,
+        });
+    
+        res.status(201).json({
+          message: "Book created successfully",
+          book: newBook,
+        });
+      } catch (error) {
+        console.log("Error during book creation: ", error);
+        res.status(500).json({ message: "Error during book creation", error });
+      }
+    };
+
 export const showOneBookController = async (req, res)=>{
   const id = req.params.id;
+  console.log("This is received book id from front end ", id);
+  
     try {
         const book = await BookModel.findById(id);
         return res.status(200).json({book});

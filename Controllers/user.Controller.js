@@ -180,6 +180,8 @@ try {
 };
 export const userInfoController = async (req, res) => {
   const id = req.params.id;
+  console.log("this is publisher user id ", id);
+  
   try {
     const user = await UserModel.findById(id);
     if(!user) {
