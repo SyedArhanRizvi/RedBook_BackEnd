@@ -41,8 +41,8 @@ export const addNewBookInDBController = async (req, res) => {
           bookCoverImg:mainBookCover,
           pages: parsedPages,
         });
-    
-        res.status(201).json({
+        
+       return res.status(201).json({
           message: "Book created successfully",
           book: newBook,
         });
@@ -67,6 +67,8 @@ export const showOneBookController = async (req, res)=>{
 export const getAllBooksController = async (req, res)=>{
     let query = {};
     let sortArg = {};
+    console.log("This is req params ", req.query);
+    
     if(req.query.categories) {
       query.categories = req.query.categories;
     }
@@ -207,5 +209,17 @@ export const userReviewController = async (req, res)=>{
   } catch (error) {
     console.log("There is some errors in you user review controller plz fix the bug first ", error);
     return res.status(500).json({message:"There is some errors in you user review controller plz fix the bug first ", error});
+  }
+}
+
+export const getUserPostedBooks = async (req, res)=>{
+  const id = req.params.id;
+  console.log("This is get user in user book controller ", id);
+  try {
+    const userBooks = await BookModel.find({ publisher: id }).populate("publisher");
+    return res.status(200).json({userPostedBooks:userBooks});
+  } catch (error) {
+    console.log("There is some errors in your get user posted  book controller plz fix the bug first ", error);
+    return res.status(500).json({message:"There is some errors in your get user posted  book controller plz fix the bug first ", error});
   }
 }

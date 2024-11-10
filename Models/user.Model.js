@@ -74,7 +74,7 @@ const userSchema = new mongoose.Schema(
     },
     postedBooks: [
       {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "RedBook",
       },
     ],
