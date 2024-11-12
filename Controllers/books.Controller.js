@@ -112,9 +112,11 @@ export const getAllBooksController = async (req, res)=>{
 }
 export const bookInfoUpdateController = async (req, res)=>{
   const id = req.params.id;
-  const {bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree} = req.body;
+  const {bookName, bookTitle, author, description, categories, publicationDate, price, availableCopies, isFree} = req.body;
+  console.log(bookName, bookTitle, author, description, categories, publicationDate, price, availableCopies, isFree);
+  
     try {
-      const book = await BookModel.findByIdAndUpdate(id, {bookName, bookTitle, author, description, categories, publicationDate, ISBN, price, availableCopies, isFree});
+      const book = await BookModel.findByIdAndUpdate(id, {bookName, bookTitle, author, description, categories, publicationDate, price, availableCopies, isFree});
       return res.status(200).json({book});
     } catch (error) {
       console.log("There is some errors in your bookInfoUpdateController controller plz fix the bug first ", error);
@@ -146,6 +148,8 @@ export const bookWishListController = async (req, res)=>{
         },
       {new : true}
     );
+    console.log("This is push item ", addedWishList);
+    
     return res.status(201).json({message:"Product Added Successfully into wish list ", addedWishList});
     } else {
        addedWishList = await UserModel.findByIdAndUpdate(userID, 
@@ -154,6 +158,7 @@ export const bookWishListController = async (req, res)=>{
         },
       {new : true}
     );
+    console.log("This is pull item ", addedWishList);
     return res.status(201).json({message:"Product Added Successfully into wish list ", addedWishList});
     }
   } catch (error) {
@@ -222,4 +227,32 @@ export const getUserPostedBooks = async (req, res)=>{
     console.log("There is some errors in your get user posted  book controller plz fix the bug first ", error);
     return res.status(500).json({message:"There is some errors in your get user posted  book controller plz fix the bug first ", error});
   }
+}
+export const showAuthorOrBook = async (req, res)=>{
+  const authorOrBook = req.query.searchAuthorOrBook;
+  console.log("Search term received:", authorOrBook);
+  
+  try {
+    const author = await UserModel.findOne({ fullName: authorOrBook });
+    const book = await BookModel.findOne({ bookName: authorOrBook });
+  
+    if (author) {
+      console.log("This is an author:", author);
+      return res.status(200).json({ type: "author", data: author });
+    }
+    
+    if (book) {
+      console.log("This is a book:", book);
+      return res.status(200).json({ type: "book", data: book });
+    }
+  
+    console.log("No author or book found for this query.");
+    return res.status(404).json({ message: "No author or book found." });
+  
+  } catch (error) {
+    console.error("Error searching for author or book:", error);
+    res.status(500).json({ message: "An error occurred while searching." });
+  }
+  
+
 }
